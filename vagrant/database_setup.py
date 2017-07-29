@@ -35,7 +35,7 @@ class MenuItem(Base):
 
 	description = Column(String(250))
 
-	prince = Column(String(8))
+	price = Column(String(8))
 
 	restaurant_id = Column(Integer, ForeignKey('restaurant.id'))
 
