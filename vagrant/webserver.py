@@ -54,5 +54,5 @@ def main():
 
 
 # immediately run the main methond when the Python interpreter executes my script
-if __name__ = '__main__'
+if __name__ == '__main__':
 	main()
