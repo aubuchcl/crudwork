@@ -1,4 +1,4 @@
-from BaseHTTPServer import BaseHTTPRequestHandler, BaseHTTPServer
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 
 class webserverHandler(BaseHTTPRequestHandler):
