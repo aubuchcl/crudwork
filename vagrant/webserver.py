@@ -89,9 +89,12 @@ class webserverHandler(BaseHTTPRequestHandler):
 						 </form>'''
 
 			output += "</body></html>"
+
+			self.wfile.write(output)
+			print output
 			return
-		except KeyboardInterrupt:
-			print "nope"
+		except:
+			pass
 
 def main():
 	# tries to attempt the code inside the try block
