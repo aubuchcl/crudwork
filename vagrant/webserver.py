@@ -1,5 +1,6 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-
+# common gateway interface used to decipher the message that was sent to the server with this module
+import cgi
 
 class webserverHandler(BaseHTTPRequestHandler):
 	def do_GET(self):
@@ -14,13 +15,42 @@ class webserverHandler(BaseHTTPRequestHandler):
 
 				# after the response we can create some content to send back to the client
 				output = ""
-				output += "<html><body>Hello!</body></html>"
+				output += "<html><body>"
+				output += "Hello!"
 
+				output += '''<form method='POST' enctype='multipart/form-data'
+							 action='/hello'>
+							 <h2>What would you like me to say?</h2>
+							 <input name='message' type='text'>
+							 <input type='submit' value='Submit'>
+							 </form>'''
+				output += "</body></html>"
 				# use this function to send a message back to the client
 				self.wfile.write(output)
 				# the following is just for testing purpose in terminal
 				print output
 				# exit this block with a return
+				return
+			if self.path.endswith('/hola'):
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+
+				output = ""
+				output += "<html><body>"
+				output += "!HOLA!<a href='/hello'>back to hello</a>"
+
+				output += '''<form method='POST' enctype='multipart/form-data'
+							 action='/hello'>
+							 <h2>What would you like me to say?</h2>
+							 <input name='message' type='text'>
+							 <input type='submit' value='Submit'>
+							 </form>'''
+
+				output += "</body></html>"
+
+				self.wfile.write(output)
+				print output
 				return
 
 			# have your exception look for an input output error
@@ -28,6 +58,40 @@ class webserverHandler(BaseHTTPRequestHandler):
 			# notify the user of the error
 			self.send_error(404, "File Not Found %s" % self.path)
 
+
+	def do_POST(self):
+		try:
+			# 301 signifies a successful post?  I think it redirects
+			self.send_response(301)
+			self.end_headers()
+
+			# cgi.parser_header funciton parses an html form header such as content type, into a main value and dictionary of parameters.
+			# ctype = main value and pdict is dictionary of parameters respectively
+			ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+
+			# check and see if this is form data being received
+			if ctype == 'multipart/form-data':
+				# fields collects all the fields in a form
+				fields = cgi.parse_multipart(self.rfile, pdict)
+				# messagecontent gets out the value of a specific field or set of fields and stores them in an array
+				messagecontent = fields.get('message')
+
+			output = ""
+			output += "<html><body>"
+			output += "<h2> Okay, how about this: </h2>"
+			output += "<h1> %s </h1>" % messagecontent[0]
+
+			output += '''<form method='POST' enctype='multipart/form-data'
+						 action='/hello'>
+						 <h2>What would you like me to say?</h2>
+						 <input name='message' type='text'>
+						 <input type='submit' value='Submit'>
+						 </form>'''
+
+			output += "</body></html>"
+			return
+		except KeyboardInterrupt:
+			print "nope"
 
 def main():
 	# tries to attempt the code inside the try block
